@@ -3,14 +3,14 @@
 
 \subsection{Lessons Learned}
 
-\textbf{Lesson 1: Full-property regression is necessary.} In control
+\textbf{Lesson 1: Full-property regression is necessary.} In industrial
 models, properties are not independent. A local fix can easily break a
 related requirement, so every candidate repair must be checked against
 the complete property set.
 
 \textbf{Lesson 2: Admissibility changes the meaning of repair success.}
 Without behavior preservation, some repairs appear successful because
-they remove problematic behavior. For control systems, such repairs are
+they remove problematic behavior. For industrial systems, such repairs are
 not acceptable.
 
 \textbf{Lesson 3: One counterexample is often insufficient.} A single
@@ -46,10 +46,10 @@ updates, or erroneous properties. The results should therefore be
 interpreted as evidence for clock-bound repair, not for arbitrary
 timed-automata repair.
 
-\textbf{External validity.} Although the control-domain dataset covers
-several domains, it is still a finite set of open or reconstructed
-models. It may not represent all industrial timed-automata control
-models. Larger proprietary models, richer data variables, and more
+\textbf{External validity.} Although the industry dataset covers several
+practical domains, it is still a finite set of open or reconstructed
+models. It may not represent all industrial timed-automata models.
+Larger proprietary models, richer data variables, and more
 complex property specifications may introduce additional challenges.
 
 \textbf{Baseline fairness.} The baseline is an iterative TARTAR-style
@@ -60,7 +60,7 @@ original setting for which TARTAR was designed. We therefore interpret
 the comparison as a comparison against a strong single-property repair
 strategy, not as a claim that TARTAR itself is unsuitable in general.
 
-\textbf{Property selection.} Control-domain properties were selected
+\textbf{Property selection.} Industry-case properties were selected
 from model descriptions, papers, embedded queries, and intended timing
 requirements. Some properties may be incomplete or may not capture all
 domain-level requirements. We mitigate this by requiring all reference

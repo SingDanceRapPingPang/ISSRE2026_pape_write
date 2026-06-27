@@ -2,7 +2,7 @@
 \label{sec:background}
 \subsection{Timed Automata and Networks}
 
-We use timed automata as the formal model for real-time control behavior
+We use timed automata as the formal model for real-time industrial behavior
 \cite{alur1994theory}. Let \texttt{C} be a finite set of clocks. A clock constraint
 over \texttt{C} is a conjunction of atomic constraints of the form
 \texttt{c\ ∼\ n}, where \texttt{c\ ∈\ C},
@@ -27,11 +27,14 @@ satisfied; it moves the automaton to a target location and resets the
 specified clocks. Thus, guards constrain when discrete actions are
 enabled, while invariants constrain how long the automaton can remain in
 a location. Networks of timed automata compose several such automata,
-often representing different parts of a control system, such as a
+often representing different parts of an industrial system, such as a
 controller, plant, environment, communication protocol, monitor, or
-scheduler \cite{larsen1997uppaal}.
+scheduler \cite{larsen1997uppaal}. We use this industrial framing
+deliberately: protocols, schedulers, embedded controllers, and monitored
+physical processes may all appear in practical industrial timed-automata
+models.
 
-Timed automata are particularly suitable for control-domain models
+Timed automata are particularly suitable for practical industrial models
 because many requirements are expressed as numerical timing thresholds.
 For instance, vehicle controllers may need to complete a gear-shifting
 sequence within a bounded response time \cite{lindahl1998gear}; railway controllers
@@ -46,7 +49,7 @@ resource deadline.
 This paper focuses on faults in such numerical clock bounds. The
 assumption is not that model structure is irrelevant, but that in many
 engineering settings the designer has already captured the intended
-control structure while some timing constants may be inaccurate due to
+discrete structure while some timing constants may be inaccurate due to
 calibration, dimensioning, transcription, or design-space uncertainty.
 This fault model is consistent with the motivation of clock-bound
 repair: a clock-bound change can correct a clerical modeling mistake or
@@ -87,9 +90,9 @@ the violating realization, and one incorrect bound can contribute to
 more than one TDT. Therefore, TDTs are best understood as repair
 evidence rather than complete repair instructions.
 
-This distinction is important in control models. A repair that simply
+This distinction is important in industrial models. A repair that simply
 blocks the discrete path of a TDT may remove the observed violation but
-also remove an intended functional behavior, such as a control action,
+also remove an intended functional behavior, such as a system action,
 communication response, scheduling transition, or medical actuation. A
 valid repair should instead correct the timing behavior while preserving
 the relevant untimed functionality of the model \cite{koelbl2019clock}.
@@ -108,7 +111,7 @@ The current MPTA-Repair pipeline does not modify property formulas, add
 or delete locations, add or delete transitions, change synchronization
 labels, replace clock references, or add/remove clock resets \cite{andre2019repairing}.
 This scope is deliberate. We aim to repair timing-parameter faults in a
-model whose discrete control structure is treated as the intended
+model whose discrete behavior structure is treated as the intended
 design. This avoids repairs that satisfy a property by changing the
 specification, altering the modeled protocol structure, or disabling
 intended behavior \cite{koelbl2019clock}. It also keeps the repair output
@@ -136,12 +139,12 @@ for accepted candidates.
 
 \subsection{Multi-Property Repair Objective}
 
-Control systems are usually validated by a set of timing properties
+Industrial timed-automata models are usually validated by a set of timing properties
 rather than by a single assertion \cite{vogel2022patterns}. These properties jointly
 express the expected safety and reliability envelope of the model, such
 as bounded response, absence of unsafe states, timeout handling,
 deadline satisfaction, and deadlock freedom \cite{leveson2011safer}. Let
-\texttt{M\_bad} be a faulty timed-automata control model, and let
+\texttt{M\_bad} be a faulty industrial timed-automata model, and let
 \texttt{Φ\ =\ \{φ1,\ ...,\ φm\}} be the property set used to validate
 it. The model may violate one or more properties, and each violated
 property may produce one or more TDTs. The goal is to construct a

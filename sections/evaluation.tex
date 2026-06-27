@@ -50,24 +50,29 @@ and repair variables before generating candidates.
 \subsection{Datasets}
 
 We evaluate the methods on two dataset groups. The first group consists
-of non-control or unrestricted timed-automata benchmarks. These models
-provide broader structural diversity and allow comparison with existing
-clock-bound repair settings. They are useful for testing whether the
-method remains effective outside a single control application family.
+of benchmark timed-automata models collected from UPPAAL and XTA
+benchmark sources. These models provide broader structural diversity and
+allow comparison with existing clock-bound repair settings. They are
+useful for testing whether the method remains effective on established
+benchmark examples rather than only on one family of case studies.
 
-The second group is a control-domain dataset. It contains timed-automata
-models related to railway control \cite{gonzalez2024realtimedevs}, automotive gear control
-\cite{lindahl1998gear}, cardiac pacing \cite{jiang2012pacemaker}, autonomous road-junction rules
-\cite{belguidoum2021junction}, railway communication timeout handling \cite{basile2021unisig}, mechanical
-ventilation \cite{cuartas2023ventilator}, and aerospace scheduling \cite{david2010herschel}. These models
-are more aligned with the industry-track motivation because they contain
-multi-component networks, synchronization among components, domain-level
-timing requirements, and properties that are not merely direct copies of
-individual guards or invariants.
+The second group is an industry dataset collected from practical
+industrial case studies. It contains timed-automata models related to
+railway alarm and communication scenarios
+\cite{gonzalez2024realtimedevs,basile2021unisig}, train-gate behavior
+\cite{behrmann2004tutorial}, automotive gear control \cite{lindahl1998gear},
+cardiac pacing \cite{jiang2012pacemaker}, autonomous road-junction rules
+\cite{belguidoum2021junction}, mechanical ventilation
+\cite{cuartas2023ventilator}, and aerospace scheduling
+\cite{david2010herschel}. These models are aligned with the
+industry-track motivation because they contain multi-component networks,
+synchronization among components, domain-level timing requirements, and
+properties that are not merely direct copies of individual guards or
+invariants.
 
 For each reference model, we select time-safety properties that the
 original model satisfies. Properties are derived from the model
-documentation, source papers, embedded queries, and intended control
+documentation, source papers, embedded queries, and intended industrial
 requirements \cite{vogel2022patterns}. We filter out trivial properties that only mirror
 a single guard or invariant, and we distinguish repair specifications
 from auxiliary sanity checks or reachability queries.
@@ -117,31 +122,31 @@ We report the number of models, properties, mutants, repaired cases,
 success rate, runtime, refinement rounds, counterexamples used,
 candidate repairs generated, changed bounds, edit magnitude, regression
 failures, admissibility rejections, timeouts, and unsupported cases. For
-control-domain models, we additionally report model complexity metrics
+industry cases, we additionally report model complexity metrics
 such as the number of templates, locations, transitions, clocks, and
 synchronization channels.
 
 \subsection{Overall Repair Effectiveness}
 
-Table I summarizes the overall repair effectiveness. On the non-control
+Table I summarizes the overall repair effectiveness. On the benchmark
 dataset, the iterative TARTAR-style baseline repairs 72\% of the cases,
-while MPTA-Repair repairs 93\%. On the control-domain dataset, the
+while MPTA-Repair repairs 93\%. On the industry dataset, the
 difference is larger: the baseline repairs 20\% of the cases, while
 MPTA-Repair repairs 76\%. These results suggest that the proposed
 workflow is effective not only on general timed-automata benchmarks, but
-also on harder control-domain models where several properties and traces
+also on harder industrial models where several properties and traces
 may interact.
 
 \input{tables/overall-results}
 
-The baseline remains competitive on simpler non-control cases because
+The baseline remains competitive on simpler benchmark cases because
 many faults are local and close to the original single-trace repair
 assumption. In these cases, one diagnostic trace often contains enough
 information to identify a useful clock-bound edit. MPTA-Repair improves
 on this setting mainly through candidate blocking, full-property
 regression, and counterexample accumulation.
 
-The control-domain results show a different pattern. Control models
+The industry results show a different pattern. Industrial case-study models
 contain interacting components, synchronization, observer templates, and
 domain-level properties. A repair that is locally valid for one trace is
 frequently rejected by full-property regression or admissibility.
@@ -198,7 +203,7 @@ rather than on all syntactically editable bounds in the model.
 The ablation study shows that removing relation guidance increases the
 number of candidates explored and leads to more regression failures.
 Removing counterexample accumulation has a larger impact on
-control-domain models than on non-control models, because control models
+industry cases than on benchmark cases, because industrial models
 more often produce multiple related violations. Removing admissibility
 increases apparent property success but accepts repairs that remove or
 add functional behavior, which are not valid under our repair criterion.
@@ -215,7 +220,7 @@ Runtime is mainly affected by the number of active traces, the number of
 clocks appearing along those traces, and the number of repair variables
 opened for solving. This is consistent with prior observations in
 TDT-based repair: longer traces and larger constraint systems increase
-quantifier elimination and solving cost \cite{koelbl2019clock}. Control-domain models
+quantifier elimination and solving cost \cite{koelbl2019clock}. Industry models
 tend to be harder because they contain more templates, synchronizations,
 and property interactions, which increase both verification cost and
 admissibility-checking cost.

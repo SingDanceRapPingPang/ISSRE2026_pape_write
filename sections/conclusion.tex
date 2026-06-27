@@ -2,8 +2,8 @@
 \label{sec:conclusion}
 This paper presented \textbf{MPTA-Repair}, an automatic repair workflow
 for multi-property, multi-counterexample clock-bound repair of
-timed-automata control models. The method addresses a practical
-limitation of local TDT-based repair: control models are commonly
+industrial timed-automata models. The method addresses a practical
+limitation of local TDT-based repair: industrial models are commonly
 validated against multiple timing properties, and one timing defect may
 produce several related counterexamples. Repairing one trace in
 isolation may therefore be insufficient.
@@ -17,9 +17,9 @@ equivalence \cite{koelbl2019clock}. This design ensures that accepted repairs ar
 merely local counterexample fixes, but system-level timing corrections
 that preserve intended behavior.
 
-Our evaluation on non-control and control-domain timed-automata
-benchmarks shows that MPTA-Repair improves repair success over an
-iterative TARTAR-style baseline, especially on control-domain models
+Our evaluation on benchmark and industry timed-automata datasets shows
+that MPTA-Repair improves repair success over an iterative TARTAR-style
+baseline, especially on industry cases
 where multi-property interaction and admissibility constraints are
 prominent. The results also show that failures remain meaningful:
 unrepaired cases often require changes outside the clock-bound repair
