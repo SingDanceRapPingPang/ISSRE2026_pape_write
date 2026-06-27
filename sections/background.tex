@@ -1,0 +1,172 @@
+﻿\section{Background and Motivation}
+\label{sec:background}
+\subsection{Timed Automata and Networks}
+
+We use timed automata as the formal model for real-time control behavior
+\cite{alur1994theory}. Let \texttt{C} be a finite set of clocks. A clock constraint
+over \texttt{C} is a conjunction of atomic constraints of the form
+\texttt{c\ ∼\ n}, where \texttt{c\ ∈\ C},
+\texttt{∼\ ∈\ \{\textless{},\ ≤,\ =,\ ≥,\ \textgreater{}\}}, and
+\texttt{n} is a non-negative numerical bound \cite{koelbl2019clock}. We write
+\texttt{B(C)} for the set of such clock constraints. A timed automaton
+is a tuple \texttt{T\ =\ (L,\ l0,\ C,\ Σ,\ Θ,\ I)}, where \texttt{L} is
+a finite set of locations, \texttt{l0\ ∈\ L} is the initial location,
+\texttt{Σ} is a set of action labels, \texttt{Θ} is a finite set of
+transitions, and \texttt{I\ :\ L\ →\ B(C)} assigns an invariant to each
+location \cite{bengtsson2004timed}. A transition \texttt{θ\ ∈\ Θ} can be written as
+\texttt{(l,\ g,\ a,\ r,\ l')}, where \texttt{l} and
+\texttt{l'} are the source and target locations,
+\texttt{g\ ∈\ B(C)} is the guard, \texttt{a\ ∈\ Σ} is the action label,
+and \texttt{r\ ⊆\ C} is the set of clocks reset by the transition.
+
+The semantics is defined over states \texttt{(l,\ u)}, where \texttt{l}
+is a location and \texttt{u\ :\ C\ →\ R≥0} is a clock valuation. A delay
+transition lets time elapse in the current location while its invariant
+remains true. An action transition can be taken when its guard is
+satisfied; it moves the automaton to a target location and resets the
+specified clocks. Thus, guards constrain when discrete actions are
+enabled, while invariants constrain how long the automaton can remain in
+a location. Networks of timed automata compose several such automata,
+often representing different parts of a control system, such as a
+controller, plant, environment, communication protocol, monitor, or
+scheduler \cite{larsen1997uppaal}.
+
+Timed automata are particularly suitable for control-domain models
+because many requirements are expressed as numerical timing thresholds.
+For instance, vehicle controllers may need to complete a gear-shifting
+sequence within a bounded response time \cite{lindahl1998gear}; railway controllers
+may need to satisfy gate, alarm, or communication timeout requirements
+\cite{basile2021unisig}; medical devices may encode physiological timing windows and
+refractory intervals \cite{jiang2012pacemaker}; and avionics or aerospace scheduling
+models may encode execution-time bounds and deadlines \cite{han2018avionics}. In these
+models, a numerical bound in a guard or invariant often represents a
+design threshold, timeout value, sampling period, alarm duration, or
+resource deadline.
+
+This paper focuses on faults in such numerical clock bounds. The
+assumption is not that model structure is irrelevant, but that in many
+engineering settings the designer has already captured the intended
+control structure while some timing constants may be inaccurate due to
+calibration, dimensioning, transcription, or design-space uncertainty.
+This fault model is consistent with the motivation of clock-bound
+repair: a clock-bound change can correct a clerical modeling mistake or
+indicate that the timing resources of the design need to be
+re-dimensioned \cite{koelbl2019clock}. It is also consistent with the broader intuition
+behind mutation-based repair and testing that many defects can be
+modeled as small deviations from an otherwise nearly correct artifact
+\cite{demillo1978hints}.
+
+\subsection{Timed Diagnostic Traces}
+
+Timed-automata models are checked against timing properties using
+real-time model checkers \cite{larsen1997uppaal}. In this paper, we focus on timed
+safety properties, i.e., properties that require all reachable states to
+satisfy a specified invariant condition. Such properties commonly
+constrain whether a location may be reached, whether a clock may exceed
+a bound in a location, or whether an error state is reachable. More
+complex requirements can also be represented using observer automata or
+monitor templates that reduce them to safety-style checks \cite{vogel2022patterns}.
+
+A symbolic timed trace is a finite sequence of transitions
+\texttt{S\ =\ θ0,\ ...,\ θn−1} \cite{koelbl2019clock}. A realization of \texttt{S} is a
+sequence of non-negative delays that makes the transition sequence
+executable from the initial state while respecting guards, resets, and
+invariants. A trace is feasible if it has at least one realization. If a
+feasible trace has a realization whose final state violates a timed
+safety property \texttt{Π}, then the trace is a timed diagnostic trace
+for \texttt{Π} \cite{koelbl2019clock}.
+
+A TDT is valuable because it gives concrete evidence of a timing
+violation. It records a sequence of timed and discrete behavior leading
+to a property-violating state, depending on the trace representation
+produced by the model checker. However, it is not a root-cause
+explanation \cite{koelbl2019clock}. A TDT does not state which numerical bound is
+wrong, whether the relevant fault is in a guard or invariant, or how the
+model should be modified. Multiple clock constraints can jointly enable
+the violating realization, and one incorrect bound can contribute to
+more than one TDT. Therefore, TDTs are best understood as repair
+evidence rather than complete repair instructions.
+
+This distinction is important in control models. A repair that simply
+blocks the discrete path of a TDT may remove the observed violation but
+also remove an intended functional behavior, such as a control action,
+communication response, scheduling transition, or medical actuation. A
+valid repair should instead correct the timing behavior while preserving
+the relevant untimed functionality of the model \cite{koelbl2019clock}.
+
+\subsection{Clock-Bound Repair}
+
+Clock-bound repair modifies numerical bounds in clock constraints while
+preserving the surrounding automaton structure \cite{koelbl2019clock}. In this paper, a
+repairable bound is an occurrence of a numerical constant \texttt{n} in
+an atomic clock constraint \texttt{c\ ∼\ n} that appears in a transition
+guard or a location invariant. A repair changes \texttt{n} to a new
+value \texttt{n'}, or equivalently applies a variation
+\texttt{v} so that the repaired bound becomes \texttt{n\ +\ v}.
+
+The current MPTA-Repair pipeline does not modify property formulas, add
+or delete locations, add or delete transitions, change synchronization
+labels, replace clock references, or add/remove clock resets \cite{andre2019repairing}.
+This scope is deliberate. We aim to repair timing-parameter faults in a
+model whose discrete control structure is treated as the intended
+design. This avoids repairs that satisfy a property by changing the
+specification, altering the modeled protocol structure, or disabling
+intended behavior \cite{koelbl2019clock}. It also keeps the repair output
+understandable to engineers, because each edit corresponds to a concrete
+timing threshold in the model.
+
+TDT-based clock-bound repair encodes the feasibility of a diagnostic
+trace as constraints over delays and clock values \cite{koelbl2019clock}. Bound
+variation variables are then introduced for clock constraints occurring
+in guards and invariants. MaxSMT solving is used to find a small set of
+bound changes that prevents the trace from having a realization that
+violates the property \cite{sebastiani2015optimization}. In the original single-trace setting,
+this yields a local clock-bound repair: the same discrete trace remains
+executable, but no timing realization of that trace witnesses the
+considered property violation.
+
+A local repair is not automatically valid for the full model. Changing
+clock bounds can affect other executions, other properties, and the
+reachability of functional behavior. The TARTAR approach therefore
+defines admissibility using functional equivalence: the repaired model
+should preserve the untimed language of the original model, so that no
+action traces are added or removed by the repair \cite{koelbl2019clock}. MPTA-Repair
+adopts this admissibility criterion as the behavior-preservation gate
+for accepted candidates.
+
+\subsection{Multi-Property Repair Objective}
+
+Control systems are usually validated by a set of timing properties
+rather than by a single assertion \cite{vogel2022patterns}. These properties jointly
+express the expected safety and reliability envelope of the model, such
+as bounded response, absence of unsafe states, timeout handling,
+deadline satisfaction, and deadlock freedom \cite{leveson2011safer}. Let
+\texttt{M\_bad} be a faulty timed-automata control model, and let
+\texttt{Φ\ =\ \{φ1,\ ...,\ φm\}} be the property set used to validate
+it. The model may violate one or more properties, and each violated
+property may produce one or more TDTs. The goal is to construct a
+repaired model \texttt{M\_rep} by modifying a small number of
+clock-bound constants in guards and invariants.
+
+A candidate repair is accepted only if it satisfies three requirements.
+First, the repaired model must remain syntactically valid as a
+timed-automata model; in particular, repaired clock bounds must remain
+non-negative, and rational bounds introduced by solving must be
+normalized if required by the target tool representation. Second, the
+repaired model must satisfy the complete property set \texttt{Φ} under
+regression verification, not only the property that produced the current
+TDT. Third, the repaired model must preserve the functional behavior of
+the original model using the TARTAR-style admissibility test based on
+functional equivalence \cite{koelbl2019clock}.
+
+The multi-property setting imposes obligations beyond local single-trace
+repair \cite{clarke2018handbook}. Different properties may share clocks, locations,
+synchronization actions, or execution fragments. A repair computed for
+one property can therefore affect the behavior relevant to another
+property. Similarly, multiple TDTs may reflect the same underlying
+timing defect, so repairing them independently may duplicate solving
+effort or produce inconsistent candidate edits. MPTA-Repair does not
+treat these properties and traces as unrelated subproblems. Instead, it
+analyzes them as a joint repair task, generates candidates using
+multi-property and multi-counterexample evidence, and accepts a repair
+only after iterative regression verification and admissibility checking.

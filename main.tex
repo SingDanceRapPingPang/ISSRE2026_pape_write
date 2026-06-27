@@ -1,0 +1,58 @@
+﻿\documentclass[conference]{IEEEtran}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{url}
+\graphicspath{{figures/}}
+\DeclareUnicodeCharacter{223C}{\ensuremath{\sim}}
+\DeclareUnicodeCharacter{2208}{\ensuremath{\in}}
+\DeclareUnicodeCharacter{2264}{\ensuremath{\leq}}
+\DeclareUnicodeCharacter{2265}{\ensuremath{\geq}}
+\DeclareUnicodeCharacter{2286}{\ensuremath{\subseteq}}
+\DeclareUnicodeCharacter{2192}{\ensuremath{\to}}
+\DeclareUnicodeCharacter{2212}{-}
+\DeclareUnicodeCharacter{2203}{\ensuremath{\exists}}
+\DeclareUnicodeCharacter{2200}{\ensuremath{\forall}}
+\DeclareUnicodeCharacter{2227}{\ensuremath{\wedge}}
+\DeclareUnicodeCharacter{2228}{\ensuremath{\vee}}
+\DeclareUnicodeCharacter{21D2}{\ensuremath{\Rightarrow}}
+\DeclareUnicodeCharacter{2260}{\ensuremath{\neq}}
+\DeclareUnicodeCharacter{03A3}{\ensuremath{\Sigma}}
+\DeclareUnicodeCharacter{0398}{\ensuremath{\Theta}}
+\DeclareUnicodeCharacter{03B8}{\ensuremath{\theta}}
+\DeclareUnicodeCharacter{03A0}{\ensuremath{\Pi}}
+\DeclareUnicodeCharacter{03C4}{\ensuremath{\tau}}
+\DeclareUnicodeCharacter{03C6}{\ensuremath{\varphi}}
+\DeclareUnicodeCharacter{03A6}{\ensuremath{\Phi}}
+\DeclareUnicodeCharacter{03B2}{\ensuremath{\beta}}
+\DeclareUnicodeCharacter{03C1}{\ensuremath{\rho}}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+\title{MPTA-Repair: Multi-Property Clock-Bound Repair for Control-Domain Timed Automata}
+\author{%
+% TODO: Add the non-anonymous author names, affiliations, city/country, and email/ORCID. The Markdown-converted draft had an empty \author{} block.
+}
+\maketitle
+\begin{abstract}
+Timed automata are widely used to model and verify real-time control systems, but practical control models often combine multiple components, clocks, synchronizations, guards, invariants, and timing properties. When several properties fail, engineers must identify clock-bound constants that can be repaired without breaking other requirements or changing intended untimed behavior. This paper presents MPTA-Repair, a counterexample-guided workflow for multi-property clock-bound repair of control-domain timed automata. MPTA-Repair modifies numerical clock bounds in guards and invariants, uses MaxSMT-based repair generation to synthesize small candidate edits, validates each candidate through full-property regression verification, and applies a TARTAR-style admissibility check for functional equivalence. The workflow jointly considers relations among violated properties, diagnostic traces, and repair variables during iterative refinement.
+\end{abstract}
+\begin{IEEEkeywords}
+Timed automata, multi-property repair, clock-bound repair, real-time control systems
+\end{IEEEkeywords}
+\input{sections/introduction}
+\input{sections/background}
+\input{sections/approach}
+\input{sections/evaluation}
+\input{sections/discussion}
+\input{sections/related_work}
+\input{sections/conclusion}
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+\end{document}

@@ -1,0 +1,38 @@
+﻿\section{Related Work}
+\label{sec:related-work}
+
+The closest related work is clock-bound repair for timed systems and
+TarTar \cite{koelbl2020tartar}. Clock-bound repair encodes timed diagnostic traces into
+linear real arithmetic and uses MaxSMT solving to compute small
+modifications to guard and invariant bounds \cite{koelbl2019clock}. TarTar extends this
+line into a repair analysis tool and introduces an admissibility check
+based on functional equivalence. MPTA-Repair builds on this foundation,
+but targets a different setting: multiple properties, multiple
+diagnostic traces, and full-property validation in timed-automata
+control models.
+
+A second related direction is parameter synthesis for parametric timed
+automata \cite{alur1993parametric}. Tools such as IMITATOR synthesize parameter valuations
+that satisfy timing constraints or preserve behavior around a reference
+valuation \cite{andre2010imitator}. These techniques are powerful for design-space
+exploration and robustness analysis \cite{bendik2021robustness}. MPTA-Repair differs in its
+use of diagnostic traces and its focus on producing small syntactic
+repairs for faulty models rather than synthesizing a full parameter
+region.
+
+A third related direction is model repair and automated program repair
+using SAT, MaxSAT, SMT, and counterexample-guided refinement \cite{weimer2009automatically}.
+These works provide search and optimization ideas such as fault
+localization \cite{jose2011bugassist}, candidate blocking \cite{mechtaev2016angelix}, repair minimization
+\cite{nguyen2013semfix}, and abstraction refinement \cite{clarke2000cegar}. MPTA-Repair adapts this
+style of reasoning to the semantics of timed automata, where candidate
+validity must consider both timing properties and untimed behavior
+preservation.
+
+Finally, this work is related to industrial verification and
+dependability engineering \cite{leveson2011safer}. Industry-oriented verification often
+emphasizes full regression, explainability, traceability, and lessons
+learned rather than only theoretical completeness \cite{clarke2018handbook}. MPTA-Repair
+follows this perspective by treating repair as an engineering workflow:
+diagnostic traces generate candidates, but acceptance depends on full
+regression evidence and admissibility.
