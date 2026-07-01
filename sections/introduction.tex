@@ -71,12 +71,14 @@ and aerospace scheduling \cite{david2010herschel}. We measure repair effectivene
 runtime, regression results, and behavior preservation, compare with an iterative TARTAR-style baseline
 under identical full-property regression and admissibility requirements, and report practical observations.
 
-The contributions are as follows. We formulate practical clock-bound repair as a multi-property,
-multi-counterexample problem; present MPTA-Repair with diagnostic-trace and relation-guided search; implement a prototype
-combining trace analysis, MaxSMT-based repair, full-property regression verification, and TARTAR-style admissibility checking;
-evaluate it on benchmark and industry datasets against an iterative single-property baseline under identical
-acceptance criteria; and report lessons on property selection, repair interpretability, and full regression
-after each candidate repair.
+The contributions of this paper are as follows. We formulate practical clock-bound repair as a 
+multi-property, multi-counterexample problem; present MPTA-Repair, in which diagnostic traces 
+and lightweight relation analysis guide the repair search; implement a prototype that combines 
+trace analysis, MaxSMT-based repair, full-property regression verification, and TARTAR-style 
+admissibility checking; evaluate the approach on benchmark and industry datasets against an 
+iterative single-property baseline under identical acceptance criteria; and report lessons on 
+property selection, repair interpretability, and the need for full regression after each 
+candidate repair.
 
 The remainder of this paper is organized as follows. Section II provides
 the background and problem setting, including timed automata, diagnostic
