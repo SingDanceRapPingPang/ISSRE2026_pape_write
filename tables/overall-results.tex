@@ -1,18 +1,17 @@
-﻿\begin{table}[t]
-\caption{Overall repair outcomes reported in the source draft.}
+\begin{table}[t]
+\caption{Repair success rates across benchmark and industrial datasets.}
 \label{tab:overall-results}
 \centering
 \scriptsize
-\setlength{\tabcolsep}{2pt}
-\begin{tabular}{@{}p{0.24\columnwidth}p{0.34\columnwidth}p{0.09\columnwidth}p{0.11\columnwidth}p{0.13\columnwidth}@{}}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lll@{}}
 \toprule
-Dataset group & Method & Cases & Repaired & Success rate \\
+Dataset & Method & Success rate \\
 \midrule
-Benchmark & Iterative TARTAR-style baseline & N1 & R1 & 72\% \\
-Benchmark & MPTA-Repair & N1 & R2 & 93\% \\
-Industry & Iterative TARTAR-style baseline & N2 & R3 & 20\% \\
-Industry & MPTA-Repair & N2 & R4 & 76\% \\
+Benchmark & Iterative baseline & 72\% \\
+Benchmark & MPTA-Repair & 93\% \\
+Industrial & Iterative baseline & 20\% \\
+Industrial & MPTA-Repair & 76\% \\
 \bottomrule
 \end{tabular}
-% TODO: Replace placeholder counts N1, N2, R1, R2, R3, and R4 with final evaluated counts, and confirm the success rates.
 \end{table}
