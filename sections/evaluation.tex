@@ -1,44 +1,57 @@
 \section{Implementation and Experimental Evaluation}
 \label{sec:evaluation}
 
-This section details the implementation of MPTA-Repair and evaluates
-its practical effectiveness across both standardized benchmark models
-and complex industrial case studies. To distinguish our work from
-existing automated repair tools, the evaluation focuses on how
-clock-bound edits affect transition-enabling logic and location
-residence constraints, rather than treating repair as an isolated
-constant-tuning task. This perspective is important for timed automata
-because a local timing edit can affect several properties and can change
-the feasibility of related executions. We therefore compare MPTA-Repair
-with an iterative baseline to show the need for multi-property
-regression and multi-counterexample analysis during repair.
+This section details the implementation of the MPTA-Repair framework
+and systematically evaluates its practical effectiveness across both
+standardized benchmark models and complex industrial case studies. To
+clearly distinguish our targeted contribution while maintaining
+practical applicability, our methodology strictly focuses on the
+automated repair of numerical clock bounds within transition guards and
+location invariants, deliberately avoiding arbitrary alterations to the
+underlying discrete transition logic. This focused parametric repair
+space is pragmatic for industrial contexts, because modifying clock
+bounds can correct clerical modeling mistakes and provide useful
+insights for redimensioning system time resources without disrupting the
+intended functional design. Furthermore, we compare MPTA-Repair with a
+specialized iterative baseline technique constructed by extending the
+foundational TARTAR repair idea \cite{koelbl2020tartar} with a
+sequential repair loop. This comparison demonstrates the necessity of
+incorporating multi-property regression and multi-counterexample
+analysis to prevent secondary errors during repair.
 
 \subsection{Prototype Implementation}
 
-We implemented MPTA-Repair as an integrated repair pipeline built around
-a timed-automata model parser, a verification interface to UPPAAL
-\cite{larsen1997uppaal}, a diagnostic-trace analyzer, a MaxSMT-based
-repair backend powered by Z3 \cite{demoura2008z3}, and a dedicated
-admissibility checker. The repair frontend parses the faulty model and
-extracts editable clock-bound occurrences from transition guards and
-location invariants. Each repair site records its template, location or
-transition, clock, operator, original bound, and syntactic context. The
-trace analyzer maps diagnostic traces to the extracted repair variables,
-while the relation analyzer identifies dependencies among properties,
-traces, and repair sites in order to prioritize candidate generation and
-reduce the search space.
+We implemented MPTA-Repair as a highly integrated, incremental repair
+pipeline built around a specialized timed-automata model parser, a
+verification interface using UPPAAL \cite{larsen1997uppaal}, a
+MaxSMT-based repair backend powered by Z3 \cite{demoura2008z3}, a
+dedicated admissibility checker, and an overarching iterative refinement
+control loop. Initially, the repair frontend parses the faulty model to
+extract editable clock-bound variables embedded within transition guards
+and location invariants. The trace analyzer then maps observed
+diagnostic traces to these extracted variables. Concurrently, the
+relation analyzer establishes dependencies among the specified
+properties, generated traces, and localized repair sites in order to
+prioritize candidate generation and reduce the computational search
+space.
 
-Once the MaxSMT backend synthesizes a candidate assignment, the model
-writer instantiates the corresponding repaired model. Candidate
-acceptance then depends on two validation gates. First, the candidate is
-checked by full-property regression verification in UPPAAL to ensure
-that no collateral property violations are introduced. Second, the
-admissibility module checks functional equivalence following the
-TARTAR-style criterion \cite{koelbl2019clock}. It constructs untimed
-automata from the original and repaired models and compares their
-functional behavior. A candidate that satisfies the timed properties but
-adds or removes untimed behavior is rejected, since such a candidate
-would not preserve the intended operational logic of the model.
+Once the MaxSMT backend synthesizes a viable candidate assignment, the
+model writer instantiates the corresponding repaired model. Final
+candidate acceptance relies on two consecutive validation gates designed
+to guarantee both timing correctness and behavioral fidelity. The first
+gate performs full-property regression verification through UPPAAL to
+ensure that no collateral property violations occur. The second gate is
+an admissibility check for functional equivalence following the
+TARTAR-style criterion \cite{koelbl2019clock}. This module constructs
+untimed automata from both the original and repaired models and performs
+a comparative language-equivalence test. The system rejects any
+candidate that inadvertently adds or removes functional untimed
+behavior. Whenever either validation gate rejects a candidate, the
+control loop captures the newly exposed diagnostic traces and feeds them
+back into the relation analyzer. This initiates an incremental,
+counterexample-guided refinement iteration that further constrains the
+MaxSMT solver with updated evidence until a globally correct and
+admissible repair is found or the search budget is exhausted.
 
 \subsection{Evaluation Strategy and Datasets}
 
