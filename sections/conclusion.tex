@@ -1,32 +1,31 @@
-﻿\section{Conclusion}
+\section{Conclusion}
 \label{sec:conclusion}
-This paper presented \textbf{MPTA-Repair}, an automatic repair workflow
-for multi-property, multi-counterexample clock-bound repair of
-industrial timed-automata models. The method addresses a practical
-limitation of local TDT-based repair: industrial models are commonly
-validated against multiple timing properties, and one timing defect may
-produce several related counterexamples. Repairing one trace in
-isolation may therefore be insufficient.
 
-MPTA-Repair collects diagnostic traces from violated properties, uses
-lightweight relations among properties, traces, and repairable bounds to
-guide repair search, and synthesizes small clock-bound edits using a
-MaxSMT-based backend. Every candidate is validated by full-property
-regression and a TARTAR-style admissibility check based on functional
-equivalence \cite{koelbl2019clock}. This design ensures that accepted repairs are not
-merely local counterexample fixes, but system-level timing corrections
-that preserve intended behavior.
+This paper presented \textbf{MPTA-Repair}, an automated workflow for
+multi-property and multi-counterexample clock-bound repair of
+industrial timed automata. To overcome the limitations of isolated
+single-trace fixes, the method accumulates diagnostic traces and
+exploits explicit relations among properties, counterexamples, and
+repairable bounds to guide a MaxSMT-based search. Each synthesized
+candidate is validated through full-property regression and an
+admissibility check based on untimed functional equivalence
+\cite{koelbl2019clock}. This design ensures that accepted repairs are
+system-level timing corrections that preserve the intended operational
+behavior.
 
-Our evaluation on benchmark and industry timed-automata datasets shows
-that MPTA-Repair improves repair success over an iterative TARTAR-style
-baseline, especially on industry cases
-where multi-property interaction and admissibility constraints are
-prominent. The results also show that failures remain meaningful:
-unrepaired cases often require changes outside the clock-bound repair
-space or exceed the configured solving and validation budgets.
+Evaluations across benchmark and industrial datasets show that
+MPTA-Repair outperforms the iterative baseline, particularly in
+industrial systems with dense property interactions. The failure
+analysis further indicates that unsuccessful repairs often stem from
+the intrinsic limits of a strictly parametric clock-bound repair space.
 
-Future work will extend the repair space beyond numerical clock bounds
-to include resets, clock references, synchronization labels, and
-structural edits. We also plan to strengthen counterexample generation,
-improve relation-guided decomposition, and evaluate the method on larger
-industrial timed-automata models.
+Future work will primarily focus on extending the automated repair space
+beyond numerical clock bounds to include broader structural
+modifications, such as altering synchronization labels and redesigning
+discrete control logic. We also plan to investigate the theoretical and
+algorithmic relationship between candidate repair generation and
+admissibility verification. By formally integrating behavioral
+admissibility constraints into the early stages of search-space
+formulation, we aim to proactively prune functionally invalid candidates
+and thereby improve computational efficiency for large-scale industrial
+applications.
