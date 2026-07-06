@@ -1,27 +1,26 @@
 ﻿\section{Introduction}
 \label{sec:introduction}
 
-Networks of timed automata (NTA)~\cite{alur1994theory,bengtsson2004timed} are
-widely used to model and verify real-time systems in domains such as
-railway control, communication protocols, and aerospace
-scheduling~\cite{basile2021unisig,lonn1997tdma,david2010herschel}, whose
-correctness depends on both discrete behavior and quantitative timing
-constraints. In these models, alarms, messages, pulses, actuations, or
-resource releases may be functionally present but still incorrect if
-they occur too early, too late, or fall outside the permitted duration.
+Real-time systems combine discrete control logic with quantitative
+timing requirements. In railway control, communication protocols, and
+aerospace scheduling~\cite{basile2021unisig,lonn1997tdma,david2010herschel},
+safety depends on actions satisfying permitted time bounds; an alarm,
+message, pulse, actuation, or resource release may be unsafe if it
+occurs too early, too late, or for an invalid duration.
 
-In most practical settings, NTA models are validated against
-sets of properties rather than isolated assertions. These properties
-jointly capture safety,
-bounded response, timeout handling, deadline satisfaction, alarm
-duration, and deadlock freedom~\cite{vogel2022patterns}. When properties
-are violated, model checkers such as UPPAAL, Kronos, or opaal can return
-timed diagnostic traces (TDTs), i.e., timed counterexamples that capture
-executions reaching violating
-states~\cite{larsen1997uppaal,daws1996kronos,dalsgaard2011opaal}. TDTs are
-useful failure evidence, but they do not identify which numerical bound
-is wrong, whether the fault lies in a guard or an invariant, or how the
-bound should be changed.
+Timed automata (TAs) model such behavior with locations, clocks, guards,
+resets, and invariants~\cite{alur1994theory,bengtsson2004timed};
+practical systems are often modeled as networks of timed automata
+(NTA). Safety requirements are encoded as verifiable properties, such as
+bounded response, deadline satisfaction, alarm duration, and deadlock
+freedom~\cite{vogel2022patterns}. For an NTA, violating such a property
+indicates a safety defect whose discovery during implementation or
+testing can be costly. We therefore focus on clock-bound repair, since
+many timing faults are numerical guard or invariant bounds. Model
+checkers such as UPPAAL, Kronos, or opaal can return timed diagnostic
+traces (TDTs), i.e., timed counterexamples reaching violating
+states~\cite{larsen1997uppaal,daws1996kronos,dalsgaard2011opaal}; these
+traces expose failures but not which bound is wrong or how to change it.
 
 Repair becomes more challenging in the setting of satisfying multiple
 properties simultaneously. A bound change that blocks one TDT may leave

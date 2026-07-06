@@ -73,16 +73,16 @@ units. A multi-property repair must therefore adjust both
 $\mathit{cut}$ and $\mathit{mesh}$ while preserving the same untimed
 request--engage--acknowledge behavior.
 
-A TDT is failure evidence, not a root-cause explanation. It does not
-determine which numerical bound is faulty or whether the responsible
-occurrence is a guard or an invariant. TDT-based clock-bound repair
-encodes trace feasibility and property violation as linear arithmetic
-constraints over delays, valuations, and bound variations
-~\cite{kolbl2019clock}. MaxSMT solving then prefers small repairs,
-typically by minimizing the number and magnitude of nonzero variations
-~\cite{sebastiani2015optimization}. In the single-trace setting, the
-resulting candidate blocks the considered violating realization, but it
-does not prove that the whole model is repaired.
+TDTs provide concrete realizations of property violations, but they do
+not explain why the violations occur. In particular, a TDT does not
+identify which numerical bound is faulty or whether the relevant bound
+appears in a guard or an invariant. Following the idea of TARTAR
+\cite{kolbl2019clock}, the repair procedure developed later in this
+paper encodes TDTs as arithmetic constraints over trace feasibility,
+property violation, and bound variations. Unlike single-property repair,
+MPTA-Repair organizes constraints from multiple violated properties and
+TDTs into a joint solving process to generate candidate clock-bound
+repairs.
 
 \noindent\textbf{Definition 3.}
 Let $M_{\mathit{bad}}$ be a faulty NTA model and let
