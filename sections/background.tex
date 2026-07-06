@@ -27,14 +27,13 @@ transitions. Action transitions are instantaneous, require their guards
 to be satisfied, and reset the specified clocks; delay transitions model
 the passage of time in a location while respecting its invariant.
 
-\subsection{Diagnostic Traces and Multi-Property Motivation}
+\subsection{Timed Diagnostic Traces (TDTs) and Multi-Property Motivation}
 
-NTA verification in this paper is reduced to safety-style
-obligations. Direct examples include queries of the form
-$\mathrm{A}[]\,\psi$ and $\mathrm{A}[]\,\mathit{not}\ \mathit{deadlock}$.
-Bounded-response or deadline requirements are handled when monitor or
-observer templates encode them as reachable error locations
-~\cite{vogel2022patterns}.
+This paper focuses on timed safety properties, which are commonly used
+to specify deadlines, bounded waiting, and reachable error states in
+real-time systems. Such properties can be checked by tools such as
+UPPAAL: given an NTA and a property, the verifier either confirms the
+property or returns a counterexample trace~\cite{vogel2022patterns}.
 
 \noindent\textbf{Definition 2.}
 A symbolic timed trace (STT) of a model is a finite transition sequence
