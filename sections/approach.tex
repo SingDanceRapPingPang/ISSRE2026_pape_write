@@ -199,18 +199,17 @@ of violated traces.
 \subsection{Relation-Guided Search Optimization}
 
 During refinement, accumulating violated properties, TDTs, and editable
-bounds expands the MaxSMT search space \cite{clarke2000cegar}. To
-reduce redundant constraints, MPTA-Repair uses relation-guided
-optimization to filter, group, and rank constraints and repair
-variables. These heuristics only guide the search; correctness is still
-guaranteed through full-property regression verification and an
-admissibility check.
+bounds expands the MaxSMT search space. To reduce redundant
+constraints, MPTA-Repair uses relation-guided optimization to filter,
+group, and rank constraints and repair variables. These heuristics only
+guide the search; correctness is still guaranteed through full-property
+regression verification and an admissibility check.
 
 At the property layer, timed safety properties are normalized into an
 $\mathtt{A}[]$ fragment over location predicates and clock or integer
-constraints \cite{vogel2022patterns}. Equivalence is detected by the
-syntactic identity of normalized forms, while dominance is evaluated
-under logical subsumption, e.g., $\mathtt{A}[]\, x \le 5$ subsumes
+constraints. Equivalence is detected by the syntactic identity of
+normalized forms, while dominance is evaluated under logical
+subsumption, e.g., $\mathtt{A}[]\, x \le 5$ subsumes
 $\mathtt{A}[]\, x \le 10$ within the same structural context.
 MPTA-Repair then retains only the stronger properties for solving to
 optimize efficiency.
@@ -218,11 +217,11 @@ optimize efficiency.
 At the counterexample layer, MPTA-Repair maintains a TDT pool indexed by
 violated properties. Exact duplicates are removed, and the remaining
 traces are annotated with traversed transitions, visited locations,
-active clocks, and guard or invariant bounds \cite{kolbl2019clock}.
-Traces with identical discrete transition sequences or overlapping
-clock zones are grouped to reveal common bottlenecks. A trace constraint
-is omitted from the active encoding only when it is an exact duplicate
-or soundly subsumed by an encoded trace constraint.
+active clocks, and guard or invariant bounds. Traces with identical
+discrete transition sequences or overlapping clock zones are grouped to
+reveal common bottlenecks. A trace constraint is omitted from the active
+encoding only when it is an exact duplicate or soundly subsumed by an
+encoded trace constraint.
 
 At the repair-bound layer, MPTA-Repair maps each active property-trace
 constraint to the clock bounds occurring in or affecting its encoding.
@@ -235,14 +234,13 @@ constraint system.
 \subsection{Validation, Admissibility, and Refinement}
 
 In MPTA-Repair, candidate validation determines whether a generated edit
-set can be accepted as a repair \cite{clarke1999model}. After a
-candidate edit set is generated, the repaired model is verified against
-the entire property set $\Phi$. If a candidate resolves the observed
-violation but induces new violations against the specification, it is
-rejected, indicating that the current property-trace pool is
-insufficient. MPTA-Repair then extracts the newly observed TDTs and
-appends them to the pool, guiding the subsequent refinement
-round.
+set can be accepted as a repair. After a candidate edit set is
+generated, the repaired model is verified against the entire property
+set $\Phi$. If a candidate resolves the observed violation but induces
+new violations against the specification, it is rejected, indicating
+that the current property-trace pool is insufficient. MPTA-Repair then
+extracts the newly observed TDTs and appends them to the pool, guiding
+the subsequent refinement round.
 
 Candidates that pass full-property regression verification are further
 evaluated against an admissibility check based on functional equivalence
