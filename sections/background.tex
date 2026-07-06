@@ -60,18 +60,20 @@ that violates $\varphi$.
 
 \noindent\textit{Example 1.}
 Figure~\ref{fig:gear-shift-nta} shows the running gear-shift example.
-The Driver issues a request through $\mathit{req}!$, and the controller
-responds through $\mathit{ack}!$ or $\mathit{recover}!$. In the faulty
-controller, $\mathit{cut}\leq 1$ and $\mathit{cut}\geq 1$ allow
-engagement after one time unit, violating property $\varphi_1$, which
-requires at least two time units of torque cut. A single-property repair
-can change these bounds to $2$. However, if the
-$\mathit{mesh}\leq 3$ and $\mathit{mesh}\geq 3$ bounds remain unchanged,
-the earliest acknowledgement occurs after $2+3=5$ time units, violating
-property $\varphi_2$, which requires acknowledgement within four time
-units. A multi-property repair must therefore adjust both
-$\mathit{cut}$ and $\mathit{mesh}$ while preserving the original
-functional behavior, including the request--engage--acknowledge path.
+We check $\varphi_1$,
+\texttt{A[] (Controller.Engage imply cut >= 2)}, and $\varphi_2$,
+\texttt{A[] not Controller.Late}. In the faulty controller, the
+\texttt{Cut} invariant $\mathit{cut}\leq 1$ and the
+\texttt{Cut}$\to$\texttt{Engage} guard $\mathit{cut}\geq 1$ allow
+engagement after one time unit, violating $\varphi_1$. A single-property
+repair raises both $\mathit{cut}$ bounds to $2$. If the \texttt{Engage}
+invariant $\mathit{mesh}\leq 3$ and the
+\texttt{Engage}$\to$\texttt{Ready} guard $\mathit{mesh}\geq 3$ remain
+unchanged, the controller cannot return to \texttt{Ready} until
+$2+3=5$ time units after the request. It can therefore reach
+\texttt{Controller.Late} and violate $\varphi_2$. A multi-property repair
+must therefore adjust both $\mathit{cut}$ and $\mathit{mesh}$ while
+preserving the original functional behavior.
 
 TDTs provide concrete realizations of property violations, but they do
 not explain why the violations occur. In particular, a TDT does not
