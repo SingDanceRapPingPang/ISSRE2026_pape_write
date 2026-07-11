@@ -120,15 +120,6 @@ under the given valuation and modified bounds. The reset equation
 $\nu_{i+1}=\mathit{Reset}(\nu_i+d_i,R_i)$ updates the valuation after
 transition $\theta_i$ by resetting clocks in $R_i$ and preserving the
 others.
-The original violation encoding combines path executability with the
-final property violation:
-\begin{equation}
-  \operatorname{Enc}(\tau,\varphi,\rho)
-  =
-  \operatorname{Path}(\tau,\rho,\mathbf{z}_{\tau})
-  \land
-  \mathit{Bad}_{\varphi}(\ell_n,\nu_n)
-\end{equation}
 The predicate $\mathit{Bad}_{\varphi}(\ell_n,\nu_n)$ characterizes the
 violation state of $\varphi$ at the final location. To block this
 violating behavior while preserving executability of the discrete path
