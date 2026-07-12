@@ -43,8 +43,9 @@ The network $N$ models a real-time system by composing
 interacting timed automata, with synchronization semantics supplied by
 the target modeling language, such as UPPAAL~\cite{larsen1997uppaal}.
 The property set $\Phi$ is part of the system specification: it states
-the timing and behavioral requirements that the NTA must satisfy. For
-convenience, the satisfaction of the property set is defined as
+the timing and behavioral requirements that the NTA must satisfy. The
+notation $N\models\Phi$ means that $N$ satisfies every property in
+$\Phi$:
 \begin{equation}
 N\models\Phi
 \quad\Longleftrightarrow\quad
@@ -61,7 +62,7 @@ $\texttt{A[]}\,(\texttt{Controller.Waiting}\ \texttt{imply}\ x\leq 10)$
 requires that clock $x$ never exceed 10 while the controller is in the
 \texttt{Waiting} location.
 
-\subsection{Timed Diagnostic Traces and Accepted Repairs}
+\subsection{Timed Diagnostic Traces}
 
 \noindent\textbf{Definition 3 (Timed diagnostic trace).}
 Given an NTA specification $M=(N,\Phi)$ and a
@@ -77,6 +78,8 @@ the violated property identifies the requirement to be restored, and
 the trace identifies the timed behavior that makes the violation
 feasible. Section~\ref{sec:approach} uses such constraints from
 multiple properties in a joint solving process.
+
+\subsection{Functional Equivalence and Repair Acceptance}
 
 \noindent\textbf{Definition 4 (Untimed functional equivalence).}
 For an NTA $N$, let $L_\mu(N)$ denote the untimed
