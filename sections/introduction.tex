@@ -71,33 +71,26 @@ satisfied simultaneously. As a result, they do not provide an iterative
 repair strategy or search optimization specifically designed for the
 multi-property setting.
 
-This paper presents MPTA-Repair, an automated framework for simultaneous
-multi-property clock-bound repair of NTA via iterative
-solving. Given an NTA and a property set, MPTA-Repair
-first performs verification. If at least one property is violated, it
-searches for changes to numerical bounds in transition guards and
-location invariants to satisfy all properties and preserve the original
-functional behavior. The framework maintains a pool of property-trace
-constraints, uses relations among properties, counterexamples, and
-repairable bounds to guide MaxSMT-based candidate generation, and
-validates each candidate by full-property regression verification and an
-admissibility check based on functional equivalence.
-
-We take benchmarks derived from UPPAAL \cite{behrmann2004tutorial} and
-the XtaBenchmarkSuite \cite{farkas2018benchmarks}, together with an
-industrial dataset constructed in this work, as seeds for controlled
-clock-bound mutations that produce faulty NTA instances. Compared to the
-TARTAR baseline, MPTA-Repair achieves higher effectiveness on these
-faulty models. Specifically, it improves the success rate from $72\%$ to
-$93\%$ on the benchmark dataset and from $20\%$ to $76\%$ on the
-industrial dataset.
-
-The main contribution of this paper is to propose an automated framework
-for simultaneous multi-property clock-bound repair of NTA.
-MPTA-Repair combines iterative verification, a shared pool of
-property-trace constraints, relation-guided MaxSMT candidate generation,
-full-property regression verification, and an admissibility check based
-on functional equivalence.
+To address this limitation, we present MPTA-Repair, an automated
+framework for simultaneous multi-property clock-bound repair of NTAs.
+The main contributions of this work are as follows. First, we formalize
+simultaneous multi-property clock-bound repair for NTA models, together
+with the validity conditions of full-property satisfaction and
+preservation of the original functional behavior. Second, we propose an
+iterative, counterexample-guided MaxSMT framework that maintains a joint
+property-trace constraint pool and exploits relations among properties,
+counterexamples, and repair variables to optimize the repair search.
+Each candidate repair model undergoes full-property regression
+verification and an admissibility check based on functional equivalence.
+If regression verification reveals a new violation, the corresponding
+TDT is added to the property-trace constraint pool, and the updated pool
+is used in the next repair iteration. Third, we propose a mutation
+strategy for constructing faulty NTA models and evaluate MPTA-Repair
+against the TARTAR baseline~\cite{kolbl2019clock} on benchmark models
+from UPPAAL examples~\cite{behrmann2004tutorial} and the
+XtaBenchmarkSuite~\cite{farkas2018benchmarks}, as well as industrial
+models constructed in this work, showing higher repair success rates in
+both settings.
 
 The remainder of the paper is organized as follows.
 Section~\ref{sec:background} introduces the preliminaries and problem
