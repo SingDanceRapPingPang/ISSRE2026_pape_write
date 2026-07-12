@@ -189,47 +189,26 @@ assignment $\rho_k$ over the set of repairable bounds $S$:
 where $\delta_s^k$ is the valuation assigned to variation variable
 $\delta_s$ in round $k$.
 
-The optimization objective is governed by a hierarchical set of soft
-constraints. MPTA-Repair uses a lexicographic objective that first
-favors small repairs and then incorporates risk- and coverage-based
-priorities:
-\begin{equation}
-\operatorname*{lex\,min}_{\rho}
-\left(
-\begin{aligned}
-  &\sum_{s\in S}\mathbf{1}\{\delta_s \ne 0\},\\
-  &\sum_{s\in S}|\delta_s|,\\
-  &\sum_{s\in S} \mathit{risk}_s \cdot \mathbf{1}\{\delta_s \ne 0\},\\
-  &-\sum_{s\in S} \mathit{benefit}_s \cdot \mathbf{1}\{\delta_s \ne 0\}
-\end{aligned}
-\right)
-\end{equation}
-Here, $\mathbf{1}\{\cdot\}$ denotes the indicator function, yielding 1
-when the inner condition holds and 0 otherwise. The primary and
-secondary objectives minimize the number and total magnitude of altered
-clock bounds to produce concise repairs. The third term incorporates a
-penalty coefficient $\mathit{risk}_s$ to discourage modifications prone
-to regression, while the final term uses a reward coefficient
-$\mathit{benefit}_s$ to prioritize repair sites that cover a broader set
-of violated traces.
-
 \subsection{Relation-Guided Search Optimization}
 
-During refinement, accumulating violated properties, TDTs, and editable
-bounds expands the MaxSMT search space. To reduce redundant
-constraints, MPTA-Repair uses relation-guided optimization to filter,
+During refinement, accumulating violated properties, TDTs, and
+repairable bounds increases the size and complexity of the MaxSMT
+problem. To improve solving efficiency, MPTA-Repair uses
+relation-guided optimization to filter,
 group, and rank constraints and repair variables. These heuristics only
 guide the search; correctness is still guaranteed through full-property
 regression verification and an admissibility check.
 
-At the property layer, timed safety properties are normalized into an
-$\texttt{A[]}$ fragment over location predicates and clock or integer
-constraints. Equivalence is detected by the syntactic identity of
-normalized forms, while dominance is evaluated under logical
-subsumption, e.g., $\texttt{A[]}\, x \le 5$ subsumes
-$\texttt{A[]}\, x \le 10$ within the same structural context.
-MPTA-Repair then retains only the stronger properties for solving to
-optimize efficiency.
+At the property layer, MPTA-Repair groups timed safety properties by
+the state predicates and clock constraints in their $(\texttt{A[]},p)$
+queries. Identical query expressions are treated as duplicates. Queries
+with the same state predicate, clock, and comparison operator but
+different numerical bounds are placed in one group, and tighter bounds
+are prioritized during constraint selection; e.g.,
+$(\texttt{A[]}, P \Rightarrow x \le 5)$ is processed before
+$(\texttt{A[]}, P \Rightarrow x \le 10)$. This priority only guides the
+active constraint set; all properties remain in $\Phi$ and are checked
+during full-property regression verification.
 
 At the counterexample layer, MPTA-Repair maintains a TDT pool indexed by
 violated properties. Exact duplicates are removed, and the remaining
@@ -247,3 +226,32 @@ relevant to the current counterexample pool and ranks them for candidate
 generation. Bounds with higher relational scores are prioritized
 because their modifications are more likely to satisfy the joint
 constraint system.
+
+In iterative solving, MPTA-Repair caches trace-level quantifier
+elimination (QE). For each property-trace pair, it eliminates the delay
+and trace-local clock variables in
+$\Psi_{\tau,\varphi}^{\mathrm{repair}}(\rho)$ and memoizes the resulting
+quantifier-free obligation using the trace, property, and repair-space
+configuration as the key. Later rounds reuse cached obligations for old
+TDTs and invoke QE only for newly discovered pairs; blocking clauses over
+$\rho$ are added after QE and do not invalidate the cache.
+
+The optimization objective is governed by a hierarchical set of soft
+constraints. MPTA-Repair uses a lexicographic objective that first
+favors small repairs and then incorporates risk- and coverage-based
+priorities:
+\begin{equation}
+\operatorname*{lex\,min}_{\rho}
+\left(
+\begin{aligned}
+  &\sum_{s\in S}\mathbf{1}\{\delta_s \ne 0\},\\
+  &\sum_{s\in S}|\delta_s|,\\
+  &\sum_{s\in S} \mathit{risk}_s \cdot \mathbf{1}\{\delta_s \ne 0\},\\
+  &-\sum_{s\in S} \mathit{benefit}_s \cdot \mathbf{1}\{\delta_s \ne 0\}
+\end{aligned}
+\right)
+\end{equation}
+Here, $\mathbf{1}\{\cdot\}$ is the indicator function. The first two
+objectives minimize the number and total magnitude of altered clock
+bounds. The last two terms penalize high-risk edits and prioritize
+bounds covering more violated traces.
