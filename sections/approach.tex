@@ -144,19 +144,74 @@ currently violated properties are accumulated into a trace pool
   \mathcal{T}_k=\{(\tau_j,\varphi_j)\}_{j=1}^{m_k}
 \end{equation}
 where $m_k=|\mathcal{T}_k|$ is the number of property-trace pairs in
-the pool at round $k$. Without search-space reduction, the joint trace
-encoding contains the repair constraints for all property-trace pairs:
+the pool at round $k$. MPTA-Repair assembles a joint MaxSMT problem with
+the constraint system defined as
 \begin{equation}
 \begin{aligned}
-  \mathcal{J}_k(\rho)
-  ={}& \mathit{Dom}(\rho)\\
+  \mathcal{F}_k(\rho)
+  =
+  &\mathit{Dom}(\rho)
+  \land \mathit{Block}_k(\rho) \\
   &{}\land
-  \bigwedge_{(\tau,\varphi)\in \mathcal{T}_k}
+  \bigwedge_{(\tau,\varphi)\in \mathit{Select}(\mathcal{T}_k)}
   \Psi_{\tau,\varphi}^{\mathrm{repair}}(\rho)
 \end{aligned}
 \end{equation}
 Here, $\mathit{Dom}(\rho)$ enforces static interval consistency and
-domain limits, such as $b'_s\ge 0$.
+domain limits, such as $b'_s\ge 0$; $\mathit{Block}_k(\rho)$ collects
+the blocking clauses accumulated before round $k$ and is initially
+true; and $\mathit{Select}(\mathcal{T}_k)$ represents a reduced subset
+of traces obtained after relation-aware filtering. When an instantiated
+candidate NTA fails verification, the constraint system is updated
+incrementally. The framework expands the pool via
+\begin{equation}
+  \mathcal{T}_{k+1}
+  =
+  \mathcal{T}_k
+  \cup
+  \mathit{NewTDTs}(N(\rho_k),\Phi)
+\end{equation}
+where $\rho_k$ is the modified-bound assignment produced in round $k$,
+$N(\rho_k)$ is the candidate network obtained by applying $\rho_k$ to
+$N$, and $\mathit{NewTDTs}(N(\rho_k),\Phi)$ is the set of newly exposed
+property-trace pairs returned by full-property verification. The
+framework then updates the search-space block to exclude the failed
+assignment $\rho_k$ over the set of repairable bounds $S$:
+\begin{equation}
+  \mathit{Block}_{k+1}(\rho)
+  =
+  \mathit{Block}_k(\rho)
+  \land
+  \left(
+    \bigvee_{s\in S} \delta_s \ne \delta_s^k
+  \right)
+\end{equation}
+where $\delta_s^k$ is the valuation assigned to variation variable
+$\delta_s$ in round $k$.
+
+The optimization objective is governed by a hierarchical set of soft
+constraints. MPTA-Repair uses a lexicographic objective that first
+favors small repairs and then incorporates risk- and coverage-based
+priorities:
+\begin{equation}
+\operatorname*{lex\,min}_{\rho}
+\left(
+\begin{aligned}
+  &\sum_{s\in S}\mathbf{1}\{\delta_s \ne 0\},\\
+  &\sum_{s\in S}|\delta_s|,\\
+  &\sum_{s\in S} \mathit{risk}_s \cdot \mathbf{1}\{\delta_s \ne 0\},\\
+  &-\sum_{s\in S} \mathit{benefit}_s \cdot \mathbf{1}\{\delta_s \ne 0\}
+\end{aligned}
+\right)
+\end{equation}
+Here, $\mathbf{1}\{\cdot\}$ denotes the indicator function, yielding 1
+when the inner condition holds and 0 otherwise. The primary and
+secondary objectives minimize the number and total magnitude of altered
+clock bounds to produce concise repairs. The third term incorporates a
+penalty coefficient $\mathit{risk}_s$ to discourage modifications prone
+to regression, while the final term uses a reward coefficient
+$\mathit{benefit}_s$ to prioritize repair sites that cover a broader set
+of violated traces.
 
 \subsection{Relation-Guided Search Optimization}
 
