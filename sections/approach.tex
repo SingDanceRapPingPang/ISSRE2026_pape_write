@@ -3,26 +3,21 @@
 
 \subsection{Overview}
 
-Let $N$ be an NTA and
-$\Phi=\{\varphi_1,\ldots,\varphi_m\}$ a set of timed safety
-properties. We write $M=(N,\Phi)$ for the repair input.
-MPTA-Repair changes only repairable numerical clock bounds in guards
-and invariants. It returns a repaired specification
-$M'=(N',\Phi)$ only when $N'$ satisfies the accepted-repair condition
-in Eq.~\eqref{eq:accepted-repair}; otherwise, it reports that no repair
-was found within the resource budget.
+Given a repair input $M=(N,\Phi)$, where $N$ is an NTA and
+$\Phi=\{\varphi_1,\ldots,\varphi_m\}$ is a set of timed safety
+properties, MPTA-Repair modifies only repairable numerical clock bounds
+in guards and invariants. It returns $M'=(N',\Phi)$ only if $N'$
+satisfies the accepted-repair condition in
+Eq.~\eqref{eq:accepted-repair}; otherwise, it reports that no repair was
+found within the resource budget.
 
-The main difficulty is that the properties in $\Phi$ do not define
-independent repair tasks. Different properties may constrain the same
-clock bound, overlapping execution paths, or different stages of a
-shared timing budget. Their TDTs may also have different relations:
-some are duplicates, some share only part of a discrete path, and some
-reach different violations through the same repairable bounds.
-Consequently, an edit derived from one TDT may leave another violating
-execution feasible or invalidate a property that already holds. A
-single-property workflow that processes these TDTs independently does
-not retain their joint constraints and may repeatedly explore
-incompatible candidate edits.
+The properties in $\Phi$ are not independent: they may share clock
+bounds, execution paths, or a timing budget. Their TDTs may be
+identical, share part of an execution path, or depend on the same
+repairable bounds. Therefore, repairing one TDT may leave other
+violations unresolved or cause a satisfied property to fail. Treating
+TDTs separately ignores these relations and may lead to repeated,
+conflicting repairs.
 
 \begin{figure}[htbp]
   \centering
@@ -31,37 +26,24 @@ incompatible candidate edits.
   \label{fig:mpta-repair-workflow-small}
 \end{figure}
 
-MPTA-Repair uses these relations to organize the current repair
-problem before MaxSMT solving. At the property level, equivalent or
-stronger requirements are identified to avoid redundant constraints.
-At the trace level, duplicate and structurally related TDTs are grouped.
-At the repair-bound level, each property-trace constraint is mapped to
-the bounds that can affect it. Property-trace constraints that depend
-on disjoint bound sets form separate search groups, whereas constraints
-that share repairable bounds remain in the same group and are solved
-jointly. This partition reduces independent parts of the search without
-separating constraints that require coordinated edits.
+Figure~\ref{fig:mpta-repair-workflow-small} summarizes the MPTA-Repair
+workflow. Initial full-property verification either confirms that no
+repair is needed or initializes a shared property-trace pool with TDTs.
+MPTA-Repair analyzes relations among properties, TDTs, and repairable
+bounds, removes redundant constraints, and solves constraints that share
+bounds jointly. The selected constraints are encoded as a MaxSMT
+problem, and the resulting assignment is applied to $N$ to construct a
+candidate model. Building on TARTAR's MaxSMT repair core, MPTA-Repair adds
+relation-guided optimization, full-property regression, and a feedback
+loop that returns newly found TDTs to the shared pool.
 
-A trace-local repair workflow encodes one TDT, solves a MaxSMT
-instance, and validates the resulting candidate. MPTA-Repair extends
-this workflow with a shared property-trace pool, relation-guided
-selection of active constraints and bounds, and iterative refinement
-across properties. At refinement round $k$,
-$\mathcal{T}_k$ denotes the current set of property-trace pairs
-$(\tau,\varphi)$, where $\tau$ is a TDT for
-$\varphi\in\Phi$. The framework verifies $N'$ against the full property
-set, updates $\mathcal{T}_k$, constructs a joint MaxSMT problem for the
-dependent groups, and instantiates the resulting clock-bound edits in a
-candidate model.
-
-A candidate is not accepted merely because it satisfies the active
-MaxSMT constraints. It must first pass full-property regression
-verification and then the admissibility check based on functional
-equivalence. If either check fails, newly exposed TDTs are added to the
-pool and the rejected assignment is excluded from later rounds. Only a
-candidate that passes both checks is returned as $M'$.
-Figure~\ref{fig:mpta-repair-workflow} summarizes this iterative
-workflow.
+Each candidate undergoes full-property regression verification and the
+admissibility check based on functional equivalence. Failed regression
+adds new TDTs to the shared pool, and rejected assignments are excluded
+from later rounds. The process repeats until an accepted repair is found
+or the resource budget is exhausted.
+Figure~\ref{fig:mpta-repair-workflow} details the relation analysis,
+MaxSMT solving, and validation stages.
 
 \begin{figure*}[t]
   \centering
