@@ -103,7 +103,7 @@ Let $M_{\mathit{bad}}=(N_{\mathit{bad}},\Phi)$ be
 a faulty NTA specification. A candidate repair
 $M_{\mathit{rep}}=(N_{\mathit{rep}},\Phi)$ is obtained by changing only
 repairable clock bounds in guards and invariants. The candidate is
-accepted as a repair if and only if
+accepted if and only if
 \begin{equation}
   N_{\mathit{rep}}
   \models
@@ -119,5 +119,4 @@ the model must satisfy the entire property set, not only the
 property that produced the current TDT. The second conjunct is the
 admissibility check based on untimed functional equivalence; it prevents
 repairs that make properties true by disabling required functional
-behavior. MPTA-Repair uses this accepted-repair condition as the global
-validation criterion for candidates generated from local TDT evidence.
+behavior.
