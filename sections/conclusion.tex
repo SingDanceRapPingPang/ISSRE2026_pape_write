@@ -1,28 +1,26 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-This paper presented MPTA-Repair, an automated workflow for
-multi-property and multi-counterexample clock-bound repair of
-industrial NTA models. To overcome the limitations of isolated
-single-trace fixes, the method accumulates TDTs and
-exploits relations among properties, counterexamples, and repairable
-bounds to guide MaxSMT-based search. Each candidate is validated through
-full-property regression verification and an admissibility check based
-on functional equivalence \cite{kolbl2019clock}, ensuring that accepted
-repairs preserve the original functional behavior.
+This paper presented MPTA-Repair, an automated framework for
+simultaneous multi-property clock-bound repair of NTAs. It uses an
+iterative, counterexample-guided MaxSMT procedure that maintains a joint
+property-trace constraint pool and exploits relations among properties,
+counterexamples, and repair variables to optimize the repair search.
+Each candidate undergoes full-property regression verification and the
+admissibility check based on functional equivalence~\cite{kolbl2019clock};
+any newly revealed TDT is added to the pool for the next repair
+iteration.
 
-Evaluations across benchmark and industrial datasets show that
-MPTA-Repair outperforms the iterative baseline, particularly in
-industrial systems with dense property interactions. The failure
-analysis further indicates that unsuccessful repairs mainly arise when
-the framework cannot find an admissible candidate within the time budget,
-especially as dense timing interactions enlarge the clock-bound repair
-search space.
+The experimental results show that MPTA-Repair improves the repair
+success rate over the TARTAR baseline from 72\% to 93\% on the benchmark
+dataset and from 20\% to 76\% on the industrial dataset. The remaining
+failures mainly occur on complex models, where interactions among timing
+constraints enlarge the clock-bound repair space and prevent an
+admissible candidate from being found within the time budget.
 
-Future work will primarily focus on extending the automated repair space
-beyond numerical clock bounds to include broader structural
-modifications, such as altering synchronization labels and redesigning
-discrete control logic. We also plan to integrate the admissibility
-check earlier in repair generation, so that
-functionally invalid candidates can be pruned before costly validation
-and large-scale industrial repair can be made more efficient.
+Future work will improve repair efficiency by checking candidate
+admissibility earlier, allowing functionally invalid candidates to be
+discarded before full validation. We will also extend the repair space
+beyond numerical clock bounds to synchronization labels and discrete
+transition structures, together with new admissibility conditions for
+preserving the intended functional behavior.
