@@ -9,22 +9,24 @@ This section establishes the notation used for multi-property clock-bound repair
 \noindent\textbf{Definition 1 (Timed automaton).}
 A timed automaton (TA) is a tuple
 \begin{equation}
-  T=(L,\ell_0,C,\Sigma,\Theta,I),
-  \label{eq:ta}
+T=(L,\ell_0,C,\Sigma,\Theta,I),
+\label{eq:ta}
 \end{equation}
 where $L$ is a finite set of locations, $\ell_0$ is the initial
 location, $C$ is a finite set of clocks, $\Sigma$ is a set of action
-labels, $\Theta$ is a finite set of transitions, and $I$ maps each
-location to a clock invariant. A clock constraint is a conjunction of
+labels, $\mathcal{B}(C)$ is the set of clock constraints over $C$,
+$\Theta\subseteq L\times\mathcal{B}(C)\times\Sigma\times 2^C\times L$
+is a finite set of transitions, and
+$I:L\rightarrow\mathcal{B}(C)$ maps each location to a clock invariant.
+A clock constraint is a conjunction of
 atoms $x\sim b$, where $x\in C$, $\sim\in\{<,\leq,=,\geq,>\}$, and
 $b\in\mathbb{R}_{\geq 0}$. A transition
 $\theta=(\ell,g,a,R,\ell')$ moves from $\ell$ to $\ell'$ when guard
 $g$ is satisfied, emits action $a$, and resets clocks in $R\subseteq C$.
-Each numerical constant $b$ occurring in a guard or invariant is a
-clock-bound occurrence. MPTA-Repair only changes repairable
-clock-bound occurrences; it does not modify locations, transitions,
-synchronization labels, clock references, resets, data updates, or
-properties.
+As stated in Section~\ref{sec:approach}, this work focuses on
+repairing clock bounds. Specifically, a clock bound is the numerical
+constant $b$ in an atomic clock constraint $x\sim b$ appearing in a
+transition guard or location invariant.
 
 \noindent\textbf{Definition 2 (NTA with property set).}
 An NTA specification consists of a network of timed automata and the
