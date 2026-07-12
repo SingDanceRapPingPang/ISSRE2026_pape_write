@@ -3,18 +3,18 @@
 
 \subsection{Overview}
 
-Given a repair input $M=(N,\Phi)$, where $N$ is an NTA and
+MPTA-Repair takes as input $M=(N,\Phi)$, where $N$ is an NTA and
 $\Phi=\{\varphi_1,\ldots,\varphi_m\}$ is a set of timed safety
-properties, MPTA-Repair modifies only repairable numerical clock bounds
-in guards and invariants. It returns $M'=(N',\Phi)$ only if $N'$
-satisfies the accepted-repair condition in
-Eq.~\eqref{eq:accepted-repair}; otherwise, it reports that no repair was
-found within the resource budget.
+properties, and modifies only repairable numerical clock bounds in
+transition guards and location invariants. It returns
+$M'=(N',\Phi)$ that satisfies the accepted-repair condition in
+Eq.~\eqref{eq:accepted-repair}; otherwise, it reports that no accepted
+repair was found within the resource budget.
 
-The properties in $\Phi$ are not independent: they may share clock
-bounds, execution paths, or a timing budget. Their TDTs may be
+The properties in $\Phi$ may not be independent, as different
+properties may be affected by the same clock bounds. Their TDTs may be
 identical, share part of an execution path, or depend on the same
-repairable bounds. Therefore, repairing one TDT may leave other
+repairable bounds. A repair derived from one TDT may leave other
 violations unresolved or cause a satisfied property to fail. Treating
 TDTs separately ignores these relations and may lead to repeated,
 conflicting repairs.
