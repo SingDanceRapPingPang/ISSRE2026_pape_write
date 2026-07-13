@@ -34,7 +34,7 @@ properties, so we supplement them with timed safety properties described
 or implied by their design documents or related papers. For each model,
 we seed modifications to all clock-constraint bounds by
 $\{-10,-1,+1,+0.1M,+M\}$, where $M$ is the maximal bound compared
-against a clock in that model; because the combination space of
+against a clock in that model. Because the combination space of
 mutations is large, each mutant randomly modifies at most two
 clock-bound occurrences. We retain only mutants that are syntactically
 valid, violate at least one timed safety property, and preserve the
@@ -50,14 +50,15 @@ The evaluation is organized around the following research questions:
 \noindent\textbf{RQ1.} What are the main characteristics of the
 benchmark and industrial repair instances?
 
-\noindent\textbf{RQ2.} How effective is MPTA-Repair compared with the
-iterative TARTAR-style baseline?
+\noindent\textbf{RQ2.} How does MPTA-Repair compare with the iterative
+TARTAR-style baseline in terms of accepted-repair rate?
 
-\noindent\textbf{RQ3.} Does iterative space optimization improve repair
-efficiency?
+\noindent\textbf{RQ3.} How does iterative space optimization affect
+repair efficiency and effectiveness?
 
-\noindent\textbf{RQ4.} How do validation checks affect repair validity,
-and why do some repairs fail?
+\noindent\textbf{RQ4.} What practical lessons emerge from applying
+MPTA-Repair to industrial cases, and what explains its advantages over
+the iterative TARTAR-style baseline and its remaining failures?
 
 \subsection{Results by Research Question}
 
@@ -72,7 +73,7 @@ faults and more tightly coupled industrial timing faults.
 
 \input{tables/overall-results}
 
-\noindent\textbf{RQ2: Repair effectiveness.}
+\noindent\textbf{RQ2: Accepted-repair rate.}
 Table~\ref{tab:overall-results} shows that MPTA-Repair outperforms the
 iterative baseline on both datasets. On the benchmark dataset, the
 baseline repairs 39 of 54 faulty instances, achieving a 72\% success
@@ -92,20 +93,24 @@ time changes slightly from 15.74s to 15.46s because many faults are
 already localized. On the industrial dataset, optimization reduces the
 average time from 231.45s to 85.28s by reusing encoded obligations and
 focusing solving on relevant property-trace constraints and repairable
-bounds.
+bounds. The optimization does not change the repair space or the
+accepted-repair condition, so it does not change which candidates are
+accepted; its main effect is to reduce solving time.
 
-\noindent\textbf{RQ4: Validation and failure analysis.}
-Full-property regression verification and functional-equivalence
-admissibility checking are both necessary for valid multi-property
-repair. A candidate generated from one TDT may satisfy the local
-constraint but still violate another property, so MPTA-Repair requires
-each candidate to satisfy the full property set. The admissibility check
-then rejects behavior-breaking edits that satisfy timing properties only
-by removing intended functional behavior.
+\noindent\textbf{RQ4: Practical lessons and failure analysis.}
+The industrial cases show that accepted repairs require both global
+property checking and functional admissibility. A candidate that blocks
+one TDT may still violate another property, and a bound edit may satisfy
+timing properties only by removing intended functional behavior.
+MPTA-Repair avoids these cases by requiring each candidate to satisfy
+the full property set and pass the functional-equivalence check.
 
-Nevertheless, the framework can still fail to generate repairs in
-certain cases when it fails to find an admissible candidate within the
-time budget. This limitation is prominent in complex models like the
-Pacemaker case study, where tightly coupled timing constraints expand
-the search space, causing the solver to time out before finding a valid
-candidate.
+This also explains its advantage over the iterative TARTAR-style
+baseline. The baseline repairs one property and one TDT at a time, so
+it often produces local candidates that fail full-property regression or
+admissibility checking on tightly coupled industrial models.
+MPTA-Repair instead solves over a joint property-trace pool, which
+better captures shared timing constraints. The remaining failures
+mainly occur when no admissible candidate is found within the time
+budget, especially in models such as Pacemaker where dense timing
+interactions enlarge the clock-bound repair space.
