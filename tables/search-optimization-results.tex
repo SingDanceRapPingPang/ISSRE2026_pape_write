@@ -1,15 +1,19 @@
 \begin{table}[t]
-\caption{Average repair time with and without search optimization.}
+\caption{Average repair time and iterations with and without search optimization.}
 \label{tab:search-optimization-results}
 \centering
 \scriptsize
 \setlength{\tabcolsep}{3pt}
-\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lcc@{}}
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}llcc@{}}
 \toprule
-Dataset & Without optimization & With optimization \\
+Dataset & Method & Avg. time & Avg. iter. \\
 \midrule
-Benchmark & 15.74s & 15.46s \\
-Industrial & 231.45s & 85.28s \\
+\raisebox{-0.5\normalbaselineskip}{Benchmark}
+  & Non-optimized & 15.74s & 1.27 \\
+  & Optimized & 15.46s & 1.26 \\
+\raisebox{-0.5\normalbaselineskip}{Industrial}
+  & Non-optimized & 231.45s & 2.20 \\
+  & Optimized & 85.28s & 1.40 \\
 \bottomrule
 \end{tabular*}
 \end{table}

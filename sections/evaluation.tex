@@ -64,67 +64,53 @@ the iterative TARTAR-style baseline and its remaining failures?
 
 \noindent\textbf{RQ1: Dataset and mutation characteristics.}
 Table~\ref{tab:dataset-statistics} shows that the benchmark dataset
-contains nine original models and 54 retained mutants, whereas the
+contains nine original models and 54 retained mutants, while the
 industrial dataset contains five original models and 105 retained
-mutants. Although the benchmark dataset includes more original models,
-the industrial models are structurally larger and have more properties
-per model. On average, the benchmark models contain 30.56 locations,
-52.67 transitions, and 4.1 properties, compared with 57.80 locations,
-91.80 transitions, and 7.3 properties for the industrial models. The
-resulting repair instances therefore cover both smaller benchmark
-models and larger industrial models with broader property sets.
+mutants. Although it has fewer original models, the industrial dataset
+is larger per model: 57.80 locations, 91.80 transitions, and 7.3
+properties on average, compared with 30.56 locations, 52.67
+transitions, and 4.1 properties for the benchmark dataset. The repair
+instances therefore cover both smaller benchmark models and larger
+industrial models with broader property sets.
 
 \input{tables/overall-results}
 
 \noindent\textbf{RQ2: Accepted-repair rate.}
 Table~\ref{tab:overall-results} shows that MPTA-Repair achieves higher
 accepted-repair rates than the iterative baseline on both datasets. On
-the benchmark dataset, the baseline produces accepted repairs for 39 of
-54 instances, corresponding to a success rate of 72\%, whereas
-MPTA-Repair repairs 50 instances and reaches 93\%, an increase of 21
-percentage points. On the industrial dataset, the baseline repairs 21
-of 105 instances, while MPTA-Repair repairs 80, corresponding to
-success rates of 20\% and 76\%, respectively. The improvement is
-therefore substantially larger on the industrial dataset.
-
-The average repair time should be interpreted together with the success
-rate. On the benchmark dataset, MPTA-Repair is both more successful and
-faster on average. On the industrial dataset, MPTA-Repair takes longer
-than the baseline because it continues exploring joint repairs for
-multiple properties and TDTs. The baseline often terminates earlier
-after failing to find a valid candidate repair, which lowers its average
-time but also leads to a much lower accepted-repair rate. This result
-indicates that joint property-trace solving is especially useful for
-industrial models, where timing constraints are more tightly coupled
-and changing one clock bound may affect several properties at once.
+the benchmark dataset, it improves the success rate from 72\% to 93\%
+(39 to 50 repairs). On the industrial dataset, the improvement is larger,
+from 20\% to 76\% (21 to 80 repairs). The average time should be read
+together with these success rates. MPTA-Repair is faster on the
+benchmark dataset, but takes longer on the industrial dataset because it
+continues searching for joint repairs over multiple properties and TDTs.
+The baseline often stops earlier after failing to find a valid
+candidate, which lowers its average time but also yields far fewer
+accepted repairs. This supports the use of joint property-trace solving
+when industrial timing constraints are tightly coupled.
 
 \input{tables/search-optimization-results}
 
 \noindent\textbf{RQ3: Effect of iterative space optimization.}
 Table~\ref{tab:search-optimization-results} compares MPTA-Repair with
 and without search optimization. On the benchmark dataset, the average
-time changes slightly from 15.74s to 15.46s because many faults are
-already localized. On the industrial dataset, optimization reduces the
-average time from 231.45s to 85.28s by reusing encoded obligations and
-focusing solving on relevant property-trace constraints and repairable
-bounds. The optimization does not change the repair space or the
-accepted-repair condition, so it does not change which candidates are
-accepted; its main effect is to reduce solving time.
+iteration count is already low (1.27 without optimization and 1.26 with
+optimization), so the time reduction is small, from 15.74s to 15.46s.
+On the industrial dataset, where coupled violations often require more
+refinement rounds, optimization reduces the average iteration count from
+2.20 to 1.40 and the average time from 231.45s to 85.28s. Since the
+optimization does not change the repair space or accepted-repair
+condition, it affects efficiency rather than repair effectiveness.
 
 \noindent\textbf{RQ4: Practical lessons and failure analysis.}
 The industrial cases show that accepted repairs require both global
 property checking and functional admissibility. A candidate that blocks
-one TDT may still violate another property, and a bound edit may satisfy
-timing properties only by removing intended functional behavior.
-MPTA-Repair avoids these cases by requiring each candidate to satisfy
-the full property set and pass the functional-equivalence check.
-
-This also explains its advantage over the iterative TARTAR-style
-baseline. The baseline repairs one property and one TDT at a time, so
-it often produces local candidates that fail full-property regression or
-admissibility checking on tightly coupled industrial models.
-MPTA-Repair instead solves over a joint property-trace pool, which
-better captures shared timing constraints. The remaining failures
-mainly occur when no admissible candidate is found within the time
-budget, especially in models such as Pacemaker where dense timing
-interactions enlarge the clock-bound repair space.
+one TDT may still violate another property, while a bound edit may
+satisfy timing properties only by removing intended behavior.
+MPTA-Repair rejects such candidates through full-property regression and
+functional-equivalence checking. This also explains its advantage over
+the iterative TARTAR-style baseline: local single-TDT repairs often fail
+on coupled industrial models, whereas the joint pool captures shared
+timing constraints. Remaining failures mainly occur when no admissible
+candidate is found within the time budget, as in Pacemaker, where dense
+timing interactions enlarge the clock-bound repair space.
