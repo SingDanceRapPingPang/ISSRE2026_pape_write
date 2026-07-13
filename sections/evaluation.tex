@@ -27,72 +27,77 @@ constraints across multiple properties.
 
 \input{tables/dataset-statistics}
 
-Since real-world NTA models with labeled clock-bound faults
-are difficult to obtain, we synthesize faulty instances using mutation
-\cite{jia2011mutation}, retaining only mutants that are syntactically
-valid, violate at least one timing safety property, and preserve the
-original functional behavior. Each repair instance is
-executed with a 10-minute timeout for both MPTA-Repair and the
-baseline.
+Since real-world NTA models with labeled clock-bound faults are
+difficult to obtain, we synthesize faulty instances using mutation
+\cite{jia2011mutation}. We retain only mutants that are syntactically
+valid, violate at least one timed safety property, and preserve the
+original functional behavior. Each repair instance is executed with a
+10-minute timeout for both MPTA-Repair and the baseline.
 
 We compare MPTA-Repair against an adapted iterative TARTAR-style
 baseline \cite{kolbl2019clock}, which was originally designed for
 single-property repair and operates via trace-local repair generation.
 The evaluation is organized around the following research questions:
 
-\noindent\textbf{RQ1.} How effective is MPTA-Repair compared with the
-iterative TARTAR-style baseline?
+\noindent\textbf{RQ1.} What characteristics do the mutation-generated
+repair instances exhibit, and how do the benchmark and industrial
+datasets differ in model scale and multi-property complexity?
 
-\noindent\textbf{RQ2.} How does repair effectiveness change from
-benchmark models to industrial NTA models with more tightly coupled
-timing constraints?
+\noindent\textbf{RQ2.} How effectively does MPTA-Repair generate
+accepted repairs compared with the iterative TARTAR-style baseline on
+the benchmark and industrial datasets?
 
-\noindent\textbf{RQ3.} What practical lessons do the results reveal
-about full-property validation, admissibility checking, and remaining
-repair failures?
+\noindent\textbf{RQ3.} To what extent does iterative space optimization
+improve the repair efficiency of MPTA-Repair?
+
+\noindent\textbf{RQ4.} What roles do full-property regression
+verification and functional-equivalence admissibility checking play in
+ensuring repair validity, and what are the main causes of unsuccessful
+repairs?
 
 \subsection{Results by Research Question}
 
-\noindent\textbf{RQ1: Overall repair effectiveness.}
-Table~\ref{tab:overall-results} shows that MPTA-Repair outperforms the
-iterative baseline on both datasets. On the benchmark dataset, the
-baseline repairs 39 of 54 faulty instances, achieving a 72\% success
-rate, whereas MPTA-Repair repairs 50 instances and reaches 93\%. This
-result indicates that joint property-trace candidate generation improves
-repair effectiveness even when injected timing faults are relatively
-localized.
+\noindent\textbf{RQ1: Dataset and mutation characteristics.}
+Table~\ref{tab:dataset-statistics} shows that the benchmark dataset
+contains more original models, whereas the industrial dataset is larger
+per model and has more properties per model. The benchmark models have
+an average of 30.56 locations and 52.67 transitions, while the
+industrial models have 57.80 locations and 91.80 transitions on
+average. The retained mutants therefore cover both localized benchmark
+faults and more tightly coupled industrial timing faults.
 
 \input{tables/overall-results}
 
+\noindent\textbf{RQ2: Repair effectiveness.}
+Table~\ref{tab:overall-results} shows that MPTA-Repair outperforms the
+iterative baseline on both datasets. On the benchmark dataset, the
+baseline repairs 39 of 54 faulty instances, achieving a 72\% success
+rate, whereas MPTA-Repair repairs 50 instances and reaches 93\%. The
+gap is larger on the industrial dataset: the baseline repairs 21 of 105
+instances, while MPTA-Repair repairs 80, improving the success rate from
+20\% to 76\%. This result indicates that joint property-trace candidate
+generation is especially useful when timing constraints and properties
+are tightly coupled.
+
 \input{tables/search-optimization-results}
 
-\noindent\textbf{RQ2: Effect on industrial NTA models.}
-The advantage of MPTA-Repair becomes more pronounced on the industrial
-dataset. The iterative baseline repairs only 21 of 105 faulty
-instances, corresponding to a 20\% success rate, while MPTA-Repair
-repairs 80 instances and reaches 76\%. The baseline reports a lower
-average duration on the industrial dataset because unsuccessful runs
-typically terminate early when no valid candidate can be found. Its
-success rate drops because trace-local repairs often produce candidates
-that fail full-property regression verification or the admissibility
-check under concurrent component interactions and tightly coupled timing
-constraints.
+\noindent\textbf{RQ3: Effect of iterative space optimization.}
+Table~\ref{tab:search-optimization-results} compares MPTA-Repair with
+and without search optimization. On the benchmark dataset, the average
+time changes slightly from 15.74s to 15.46s because many faults are
+already localized. On the industrial dataset, optimization reduces the
+average time from 231.45s to 85.28s by reusing encoded obligations and
+focusing solving on relevant property-trace constraints and repairable
+bounds.
 
-\noindent\textbf{RQ3: Practical lessons and failure cases.}
-MPTA-Repair achieves higher success rates by integrating constraints
-from TDTs and properties into a joint generation process. Consequently,
-the framework produces coordinated modifications that pass both
-full-property regression verification and the admissibility check. The
-results highlight two practical lessons for applying automated
-multi-property repair to NTA. First, full-property regression
-verification is necessary because industrial properties are often
-interdependent; a localized repair for one response-time property can
-inadvertently violate another safety property, such as maximum waiting
-bounds. MPTA-Repair avoids these regressions by requiring each candidate
-to satisfy the full property set. Second, the admissibility check is
-critical to distinguish valid repairs from behavior-breaking edits that
-satisfy timing properties only by removing intended functional behavior,
-such as preventing critical system actions.
+\noindent\textbf{RQ4: Validation and failure analysis.}
+Full-property regression verification and functional-equivalence
+admissibility checking are both necessary for valid multi-property
+repair. A candidate generated from one TDT may satisfy the local
+constraint but still violate another property, so MPTA-Repair requires
+each candidate to satisfy the full property set. The admissibility check
+then rejects behavior-breaking edits that satisfy timing properties only
+by removing intended functional behavior.
 
 Nevertheless, the framework can still fail to generate repairs in
 certain cases when it fails to find an admissible candidate within the
