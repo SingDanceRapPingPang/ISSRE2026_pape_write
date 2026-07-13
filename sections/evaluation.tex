@@ -34,12 +34,10 @@ properties, so we supplement them with timed safety properties described
 or implied by their design documents or related papers. For each model,
 we seed modifications to all clock-constraint bounds by
 $\{-10,-1,+1,+0.1M,+M\}$, where $M$ is the maximal bound compared
-against a clock in that model. Because the combination space of
-mutations is large, each mutant randomly modifies at most two
-clock-bound occurrences. We retain only mutants that are syntactically
-valid, violate at least one timed safety property, and preserve the
-original functional behavior. Each repair instance is executed with a
-10-minute timeout for both MPTA-Repair and the baseline.
+against a clock in that model. We retain only mutants that are
+syntactically valid, violate at least one timed safety property, and
+preserve the original functional behavior. Each repair instance is
+executed with a 10-minute timeout for both MPTA-Repair and the baseline.
 
 The iterative baseline adapted from TARTAR \cite{kolbl2019clock}
 repairs one violated property and its TDT at a time. If validation
@@ -51,14 +49,14 @@ The evaluation is organized around the following research questions:
 benchmark and industrial repair instances?
 
 \noindent\textbf{RQ2.} How does MPTA-Repair compare with the iterative
-TARTAR-style baseline in terms of accepted-repair rate?
+TARTAR baseline in terms of accepted-repair rate?
 
 \noindent\textbf{RQ3.} How does iterative space optimization affect
 repair efficiency and effectiveness?
 
 \noindent\textbf{RQ4.} What practical lessons emerge from applying
 MPTA-Repair to industrial cases, and what explains its advantages over
-the iterative TARTAR-style baseline and its remaining failures?
+the iterative TARTAR baseline and its remaining failures?
 
 \subsection{Results by Research Question}
 
@@ -109,7 +107,7 @@ one TDT may still violate another property, while a bound edit may
 satisfy timing properties only by removing intended behavior.
 MPTA-Repair rejects such candidates through full-property regression and
 functional-equivalence checking. This also explains its advantage over
-the iterative TARTAR-style baseline: local single-TDT repairs often fail
+the iterative TARTAR baseline: local single-TDT repairs often fail
 on coupled industrial models, whereas the joint pool captures shared
 timing constraints. Remaining failures mainly occur when no admissible
 candidate is found within the time budget, as in Pacemaker, where dense
